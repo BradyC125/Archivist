@@ -21,6 +21,7 @@ $RECYCLE.BIN/
 tokenHolder.py
 *__pycache__/
 *.cache
+*.json
 
 # =========================
 # Operating System Files
