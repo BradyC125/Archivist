@@ -18,6 +18,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+tokenHolder.py
+*__pycache__/
+*.cache
+
 # =========================
 # Operating System Files
 # =========================
