@@ -24,24 +24,17 @@ async def runBot():
     flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
     creds = tools.run_flow(flow, store)
   service = build('script', 'v1', http=creds.authorize(Http()))
-
-  drive_store = oauth_file.Storage('storage.json')
-  drive_creds = drive_store.get()
-  if not drive_creds or drive_creds.invalid:
-    drive_flow = client.flow_from_clientsecrets('client_id.json', SCOPES)
-    drive_creds = tools.run_flow(drive_flow, drive_store)
-  drive_service = build('drive', 'v3', http=creds.authorize(Http()))
   
-  await scrapeAndUpload(service, drive_service)
+  await scrapeAndUpload(service)
 
 
-async def scrapeAndUpload(service, drive_service):
+async def scrapeAndUpload(service):
   print("Skim Pending")
-  postList = await postSkimmer.skimPosts(discordClient,drive_service)
+  postList = await postSkimmer.skimPosts(discordClient)
   postList.sort(key= lambda message: message["dateTime"])
   for messageDict in postList:
     del messageDict["dateTime"]
-  print(postList[0])
+  print("Skim Complete")
   request = {
     "function"   : "uploadMessages",
     "parameters" : json.dumps(postList),
@@ -49,9 +42,9 @@ async def scrapeAndUpload(service, drive_service):
   }
   
   try:
-    print("Run pending")
+    print("Run Pending")
     response = service.scripts().run(body=request,scriptId=SCRIPT_ID).execute()
-    print("Run done")
+    print("Run Complete")
     
     if 'error' in response:
       error = response['error']['details'][0]

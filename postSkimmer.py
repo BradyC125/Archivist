@@ -2,7 +2,7 @@ import discord
 import asyncio
 import re
 
-def getAttachments(message, drive_service):
+def getAttachments(message):
   attachmentList = []
   for att in message.attachments:
     attachmentList.append(att["proxy_url"])
@@ -20,10 +20,10 @@ def genReactionMessage(reactions):
     reactionString = reactionString + emojiToAdd + " (x" + str(react.count) + "), "
   return reactionString[:-2]
 
-async def skimPosts(client, drive_service):
-  channel = client.get_channel('205167432652947456')
+async def skimPosts(client):
+  channel = client.get_channel('473993283060760576')
   messageArray = []
-  async for message in client.logs_from(channel, limit=1000, reverse=True):
+  async for message in client.logs_from(channel, limit=75000, reverse=True):
     if message.type == discord.MessageType.default:
       try:
         color = str(message.author.color)
@@ -34,7 +34,7 @@ async def skimPosts(client, drive_service):
         "authorName"     : message.author.display_name,
         "authorColor"    : color,
         "messageContent" : message.clean_content,
-        "attachments"    : getAttachments(message, drive_service),
+        "attachments"    : getAttachments(message),
         "reactions"      : genReactionMessage(message.reactions)
       })
   return messageArray
